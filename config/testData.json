@@ -1,0 +1,29 @@
+{
+    "user": {
+        "email": "test-123-bs_@block.safe3.com",
+        "password": "kevin123@",
+        "firstname": "Kevin",
+        "lastname": "McAllister"
+    },
+    "updatedUser": {
+        "email": "test-321-bs_@block.safe3.hu",
+        "password": "kevin321-@_/^",
+        "firstname": "Sir Kevin",
+        "lastname": "G. McAllister"
+    },
+    "facebookUser": {
+        "email": "test-321-bs-fb_@block.safe3.com",
+        "facebookId": "my-superUniQu3_fbT0k3n@1",
+        "firstname": "Spongebob",
+        "lastname": "Squarepants"
+    },
+    "headers": {
+        "Content-Type": "application/json",
+        "Language": "hu"
+    },
+    "authToken": "",
+    "userId": -1,
+    "facebookUserId": -1,
+    "facebookUserAuthToken": "",
+    "filenames": []
+}

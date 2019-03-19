@@ -1,0 +1,597 @@
+{
+  "/user": {
+    "x-summary": "User",
+    "post": {
+      "summary": "Create new user",
+      "x-swagger-router-controller": "userController",
+      "operationId": "register",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/RegistrationRequest"
+          }
+        },
+        {
+          "in": "header",
+          "name": "Language",
+          "type": "string",
+          "enum": [
+            "en",
+            "hu"
+          ],
+          "required": true
+        }
+      ],
+      "responses": {
+        "201": {
+          "description": "User created",
+          "schema": {
+            "$ref": "#/definitions/UserDataResponse"
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "409": {
+          "description": "Email address already in use"
+        }
+      }
+    },
+    "put": {
+      "summary": "Update user data",
+      "x-swagger-router-controller": "userController",
+      "operationId": "updateUser",
+      "x-auth-required": true,
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/UpdateUserRequest"
+          }
+        },
+        {
+          "in": "header",
+          "name": "Auth-Token",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successfully updated user",
+          "schema": {
+            "$ref": "#/definitions/UserDataResponse"
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "401": {
+          "description": "Unauthorized"
+        },
+        "409": {
+          "description": "Email address already in use"
+        }
+      }
+    },
+    "get": {
+      "summary": "Get logged in user's data",
+      "x-swagger-router-controller": "userController",
+      "operationId": "getUser",
+      "x-auth-required": true,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "Auth-Token",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successfully getting user data",
+          "schema": {
+            "$ref": "#/definitions/UserDataResponse"
+          }
+        },
+        "401": {
+          "description": "Unauthorized"
+        }
+      }
+    }
+  },
+  "/user/send-activation-email": {
+    "x-summary": "Send registration activation email to user",
+    "post": {
+      "summary": "Send registration activation email to user",
+      "x-swagger-router-controller": "userController",
+      "operationId": "sendActivationEmail",
+      "x-auth-required": true,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "Auth-Token",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successfully sent email"
+        },
+        "401": {
+          "description": "Unauthorized"
+        },
+        "406": {
+          "description": "New email has to be different from the current one"
+        },
+        "409": {
+          "description": "Email already activated"
+        }
+      }
+    }
+  },
+  "/user/activate-email-address": {
+    "x-summary": "Activate email address with the link sent in email",
+    "put": {
+      "summary": "Activate email address with the link sent in email",
+      "x-swagger-router-controller": "userController",
+      "operationId": "activateEmailAddress",
+      "parameters": [
+        {
+          "in": "body",
+          "name": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/ActivateEmailAddressRequest"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successfully activated email address"
+        },
+        "401": {
+          "description": "Provided token is invalid or expired"
+        }
+      }
+    }
+  },
+  "/user/send-password-recovery-email": {
+    "x-summary": "Send password recovery link in email",
+    "post": {
+      "summary": "Send password recovery link in email",
+      "x-swagger-router-controller": "userController",
+      "operationId": "sendPasswordRecoveryEmail",
+      "parameters": [
+        {
+          "in": "body",
+          "name": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/SendPasswordRecoveryEmailRequest"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successfully sent email"
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "404": {
+          "description": "Email not found"
+        }
+      }
+    }
+  },
+  "/user/change-password": {
+    "x-summary": "Change password",
+    "put": {
+      "summary": "Change password",
+      "x-swagger-router-controller": "userController",
+      "operationId": "changePassword",
+      "x-auth-required": true,
+      "parameters": [
+        {
+          "in": "body",
+          "name": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/ChangePasswordRequest"
+          }
+        },
+        {
+          "in": "header",
+          "name": "Auth-Token",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successfully updated password"
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "401": {
+          "description": "Unauthorized"
+        },
+        "403": {
+          "description": "Forbidden because user has registered with social profile"
+        },
+        "406": {
+          "description": "Old password is incorrect"
+        }
+      }
+    }
+  },
+  "/user/change-email": {
+    "x-summary": "Change email",
+    "put": {
+      "summary": "Change email",
+      "x-swagger-router-controller": "userController",
+      "operationId": "changeEmail",
+      "x-auth-required": true,
+      "parameters": [
+        {
+          "in": "body",
+          "name": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/ChangeEmailRequest"
+          }
+        },
+        {
+          "in": "header",
+          "name": "Auth-Token",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successfully started email changing process. An activation email has been sent to the address."
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "401": {
+          "description": "Unauthorized"
+        },
+        "409": {
+          "description": "This email address is already in use"
+        }
+      }
+    }
+  },
+  "/user/reset-password": {
+    "x-summary": "Reset forgotten password",
+    "put": {
+      "summary": "Reset forgotten password",
+      "x-swagger-router-controller": "userController",
+      "operationId": "resetPassword",
+      "parameters": [
+        {
+          "in": "body",
+          "name": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/ResetPasswordRequest"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successfully reset password"
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "401": {
+          "description": "Provided token is invalid or expired"
+        }
+      }
+    }
+  },
+  "/user/language": {
+    "x-summary": "Update user's language",
+    "put": {
+      "summary": "Update user's language",
+      "x-swagger-router-controller": "userController",
+      "operationId": "updateLanguage",
+      "x-auth-required": true,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "Language",
+          "type": "string",
+          "enum": [
+            "en",
+            "hu"
+          ],
+          "required": true
+        },
+        {
+          "in": "header",
+          "name": "Auth-Token",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successfully updated language"
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "401": {
+          "description": "Unauthorized"
+        }
+      }
+    }
+  },
+  "/user/login": {
+    "x-summary": "User login",
+    "post": {
+      "summary": "Login",
+      "x-swagger-router-controller": "userController",
+      "operationId": "login",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/LoginRequest"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "User logged in",
+          "schema": {
+            "$ref": "#/definitions/UserDataResponse"
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "401": {
+          "description": "Wrong email or password"
+        }
+      }
+    }
+  },
+  "/user/check-auth-token": {
+    "x-summary": "Checks if the given AuthToken is valid",
+    "get": {
+      "summary": "Checks if the given AuthToken is valid",
+      "x-swagger-router-controller": "userController",
+      "operationId": "checkAuthToken",
+      "x-auth-required": true,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "Auth-Token",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "AuthToken is valid, user is logged in"
+        },
+        "401": {
+          "description": "Unauthorized"
+        }
+      }
+    }
+  },
+  "/user/facebook-login": {
+    "x-summary": "Facebook login or register",
+    "post": {
+      "summary": "Facebook login or register",
+      "x-swagger-router-controller": "userController",
+      "operationId": "facebookLogin",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "Language",
+          "type": "string",
+          "enum": [
+            "en",
+            "hu"
+          ],
+          "required": true
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/FacebookLoginRequest"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "User logged in (and created on first request)",
+          "schema": {
+            "$ref": "#/definitions/UserDataResponse"
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "401": {
+          "description": "Wrong email or password"
+        }
+      }
+    }
+  },
+  "/user/logout": {
+    "x-summary": "User logout",
+    "post": {
+      "summary": "Logout",
+      "x-swagger-router-controller": "userController",
+      "operationId": "logout",
+      "x-auth-required": true,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "Auth-Token",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "User logged out"
+        },
+        "401": {
+          "description": "Unauthorized"
+        }
+      }
+    }
+  },
+  "/user/profile-picture": {
+    "x-summary": "Profile picture",
+    "post": {
+      "summary": "Upload profile picture (base64)",
+      "x-swagger-router-controller": "userController",
+      "operationId": "uploadProfilePicture",
+      "x-auth-required": true,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "Auth-Token",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/UploadProfilePictureRequest"
+          }
+        }
+      ],
+      "responses": {
+        "201": {
+          "description": "Successfully uploaded profile picture"
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "401": {
+          "description": "Unauthorized"
+        }
+      }
+    },
+    "delete": {
+      "summary": "Delete profile picture",
+      "x-swagger-router-controller": "userController",
+      "operationId": "deleteProfilePicture",
+      "x-auth-required": true,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "Auth-Token",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successfully deleted profile picture"
+        },
+        "401": {
+          "description": "Unauthorized"
+        }
+      }
+    }
+  },
+  "/user/{userId}/admin": {
+    "x-summary": "Admin - manage admin privileges",
+    "post": {
+      "summary": "Admin - make user admin",
+      "x-swagger-router-controller": "userController",
+      "operationId": "makeUserAdmin",
+      "x-auth-required": true,
+      "x-min-role": 30,
+      "parameters": [
+        {
+          "in": "path",
+          "name": "userId",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "in": "header",
+          "name": "Auth-Token",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successfully set user as admin"
+        },
+        "401": {
+          "description": "Unauthorized"
+        },
+        "403": {
+          "description": "Forbidden"
+        },
+        "404": {
+          "description": "User not found"
+        }
+      }
+    },
+    "delete": {
+      "summary": "Admin - remove admin privileges from user",
+      "x-swagger-router-controller": "userController",
+      "operationId": "removeAdminPermissions",
+      "x-auth-required": true,
+      "x-min-role": 30,
+      "parameters": [
+        {
+          "in": "path",
+          "name": "userId",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "in": "header",
+          "name": "Auth-Token",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successfully removed admin privileges from user"
+        },
+        "401": {
+          "description": "Unauthorized"
+        },
+        "403": {
+          "description": "Forbidden"
+        },
+        "404": {
+          "description": "User not found"
+        }
+      }
+    }
+  }
+}

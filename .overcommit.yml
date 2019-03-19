@@ -1,0 +1,251 @@
+# Default configuration that all Overcommit configurations inherit from.
+#
+# This is an opinionated list of which hooks are valuable to run and what their
+# out-of-the-box settings should be.
+#-------------------------------------------------------------------------------
+# Loads Bundler context from a Gemfile. If false, does nothing (default).
+#
+# Specifying a Gemfile for Bundler to load allows you to control which gems are
+# available in the load path (i.e. loadable via `require`) within your hook
+# runs. Note that having a Gemfile requires you to include `overcommit` itself
+# in your Gemfile (otherwise Overcommit can't load itself!).
+#
+# This is useful if you want to:
+#
+#   - Enforce a specific version of Overcommit to use for all hook runs
+#     (or to use a version from the master branch that has not been released yet)
+#   - Enforce a specific version or unreleased branch is used for a gem you want
+#     to use in your git hooks
+#
+# WARNING: This makes your hook runs slower, but you can work around this!
+#
+# Loading a Bundler context necessarily adds a startup delay to your hook runs
+# as Bundler parses the Gemfile and checks that the dependencies are satisfied.
+# Thus for projects with many gems this can introduce a noticeable delay.
+#
+# The recommended workaround is to create a separate Gemfile in the root of your
+# repository (call it `.overcommit_gems.rb`), and include only the gems that
+# your Overcommit hooks need in order to run. This significantly reduces the
+# startup delay in your hook runs. Make sure to commit both
+# `.overcommit_gems.rb` and the resulting `.overcommit_gems.rb.lock` file to
+# your repository, and then set the `gemfile` option below to the name you gave
+# the file.
+# (Generate lock file by running `bundle install --gemfile=.overcommit_gems.rb`)
+gemfile: false
+# Where to store hook plugins specific to a repository. These are loaded in
+# addition to the default hooks Overcommit comes with. The location is relative
+# to the root of the repository.
+plugin_directory: '.git-hooks'
+# Whether to hide hook output by default. This results in completely silent hook
+# runs except in the case of warning or failure.
+quiet: false
+# Number of hooks that can be run concurrently. Typically this won't need to be
+# adjusted, but if you know that some of your hooks themselves use multiple
+# processors you can lower this value accordingly. You can define
+# single-operator mathematical expressions, e.g. '%{processors} * 2', or
+# '%{processors} / 2'.
+concurrency: '%{processors}'
+# Whether to check if a hook plugin has changed since Overcommit last ran it.
+# This is a defense mechanism when working with repositories which can contain
+# untrusted code (e.g. when you fetch a pull request from a third party).
+# See https://github.com/brigade/overcommit#security for more information.
+verify_signatures: true
+# Hooks that are run against every commit message after a user has written it.
+# These hooks are useful for enforcing policies on commit messages written for a
+# project.
+CommitMsg:
+  ALL:
+    requires_files: false
+    quiet: false
+  CapitalizedSubject:
+    enabled: false
+    description: 'Check subject capitalization'
+  EmptyMessage:
+    enabled: true
+    description: 'Check for empty commit message'
+    quiet: true
+  HardTabs:
+    enabled: false
+    description: 'Check for hard tabs'
+  MessageFormat:
+    enabled: false
+    description: 'Check commit message matches expected pattern'
+    pattern: '(.+)[|](.+)[|](.+)'
+    expected_pattern_message: '<Issue Id> | <Commit Message Description> | <Developer(s)>'
+    sample_message: 'DEFECT-1234 | Refactored Onboarding flow | John Doe'
+  RussianNovel:
+    enabled: false
+    description: 'Check length of commit message'
+    quiet: true
+  SingleLineSubject:
+    enabled: false
+    description: 'Check subject line'
+  SpellCheck:
+    enabled: false
+    description: 'Check for misspelled words'
+    required_executable: 'hunspell'
+    flags: ['-a']
+  TextWidth:
+    enabled: false
+    description: 'Check text width'
+    max_subject_width: 60
+    min_subject_width: 0
+    max_body_width: 72
+  TrailingPeriod:
+    enabled: false
+    description: 'Check for trailing periods in subject'
+# Hooks that are run after `git commit` is executed, before the commit message
+# editor is displayed. These hooks are ideal for syntax checkers, linters, and
+# other checks that you want to run before you allow a commit object to be
+# created.
+PreCommit:
+  ALL:
+    problem_on_unmodified_line: report
+    requires_files: true
+    required: false
+    quiet: false
+  AuthorEmail:
+    enabled: true
+    description: 'Check author email'
+    requires_files: false
+    required: true
+    quiet: true
+    pattern: '^[^@]+@.*$'
+  AuthorName:
+    enabled: true
+    description: 'Check for author name'
+    requires_files: false
+    required: true
+    quiet: true
+  CaseConflicts:
+    enabled: true
+    description: 'Check for case-insensitivity conflicts'
+    quiet: true
+  EsLint:
+    enabled: false
+    description: 'Analyze with ESLint'
+    required_executable: 'eslint'
+    flags: ['--format=compact']
+    install_command: 'npm install -g eslint'
+    include: '**/*.js'
+  ExecutePermissions:
+    enabled: false
+    description: 'Check for file execute permissions'
+    quiet: true
+  FixMe:
+    enabled: false
+    description: 'Check for "token" strings'
+    required_executable: 'grep'
+    flags: ['-IEHnw']
+    keywords: ['BROKEN', 'BUG', 'ERROR', 'FIXME', 'HACK', 'NOTE', 'OPTIMIZE', 'REVIEW', 'TODO', 'WTF', 'XXX', 'TODO']
+  ForbiddenBranches:
+    enabled: false
+    description: 'Check for commit to forbidden branch'
+    quiet: true
+    branch_patterns: ['master']
+  ImageOptim:
+    enabled: false
+    description: 'Check for optimizable images'
+    required_executable: 'image_optim'
+    install_command: 'gem install image_optim'
+    include:
+      - '**/*.gif'
+      - '**/*.jpeg'
+      - '**/*.jpg'
+      - '**/*.png'
+      - '**/*.svg'
+  JsHint:
+    enabled: false
+    description: 'Analyze with JSHint'
+    required_executable: 'jshint'
+    flags: ['--verbose']
+    install_command: 'npm install -g jshint'
+    include: '**/*.js'
+  JsLint:
+    enabled: false
+    description: 'Analyze with JSLint'
+    required_executable: 'jslint'
+    flags: ['--terse']
+    install_command: 'npm install -g jslint'
+    include: '**/*.js'
+  JsonSyntax:
+    enabled: false
+    description: 'Validate JSON syntax'
+    required_library: 'json'
+    install_command: 'gem install json'
+    include: '**/*.json'
+  MergeConflicts:
+    enabled: true
+    description: 'Check for merge conflicts'
+    quiet: true
+    required_executable: 'grep'
+    flags: ['-IHn', "^<<<<<<<[ \t]"]
+  SemiStandard:
+    enabled: true
+    description: 'Analyze with semistandard'
+    required_executable: 'semistandard'
+    flags: ['--verbose']
+    install_command: 'npm install -g semistandard'
+    include: '**/*.js'
+  Sqlint:
+    enabled: false
+    description: 'Analyze with sqlint'
+    required_executable: 'sqlint'
+    install_command: 'gem install sqlint'
+    include: '**/*.sql'
+  Standard:
+    enabled: false
+    description: 'Analyze with standard'
+    required_executable: 'standard'
+    flags: ['--verbose']
+    install_command: 'npm install -g standard'
+    include: '**/*.js'
+  TrailingWhitespace:
+    enabled: false
+    description: 'Check for trailing whitespace'
+    required_executable: 'grep'
+    flags: ['-IHn', "[ \t]$"]
+  LineEndings:
+    description: 'Check line endings'
+    enabled: false
+    eol: "\n" # or "\r\n" for Windows-style newlines
+  YamlLint:
+    enabled: false
+    description: 'Analyze with YAMLlint'
+    required_executable: 'yamllint'
+    flags: ['--format=parsable']
+    install_command: 'pip install yamllint'
+    include:
+      - '**/*.yaml'
+      - '**/*.yml'
+  YamlSyntax:
+    enabled: false
+    description: 'Check YAML syntax'
+    required_library: 'yaml'
+    include:
+      - '**/*.yaml'
+      - '**/*.yml'
+# Hooks that run after HEAD changes or a file is explicitly checked out.
+PostCheckout:
+  ALL:
+    required: false
+    quiet: false
+    skip_file_checkout: true
+# Hooks that run after a commit is created.
+PostCommit:
+  ALL:
+    requires_files: false
+    required: false
+    quiet: false
+  GitGuilt:
+    enabled: false
+    description: 'Calculate changes in blame since last commit'
+    requires_files: true
+    required_executable: 'git-guilt'
+    flags: ['HEAD~', 'HEAD']
+    install_command: 'npm install -g git-guilt'
+  GitLfs:
+    enabled: false
+    description: 'Check status of lockable files tracked by Git LFS'
+    required_executable: 'git-lfs'
+    install_command: 'brew install git-lfs'

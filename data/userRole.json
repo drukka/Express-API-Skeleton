@@ -1,0 +1,10 @@
+[{
+    "id": 10,
+    "name": "user"
+}, {
+    "id": 20,
+    "name": "admin"
+}, {
+    "id": 30,
+    "name": "superAdmin"
+}]

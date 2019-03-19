@@ -1,0 +1,50 @@
+{
+  "name": "skeleton",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "bcrypt": "~3.0.1",
+    "body-parser": "~1.18.3",
+    "cors": "~2.8.4",
+    "dotenv": "~6.0.0",
+    "email-templates": "~5.0.1",
+    "express": "^4.16.4",
+    "express-mung": "^0.5.1",
+    "handlebars": "~4.0.12",
+    "helmet": "^3.14.0",
+    "i18n": "~0.8.3",
+    "json-merger": "^1.0.2",
+    "jsonwebtoken": "~8.3.0",
+    "lodash": "~4.17.11",
+    "morgan": "~1.9.1",
+    "mysql": "~2.16.0",
+    "mysql2": "~1.5.3",
+    "nodemon": "~1.18.7",
+    "sequelize": "~4.38.1",
+    "sqlite3": "~4.0.2",
+    "swagger-tools": "^0.10.4"
+  },
+  "devDependencies": {
+    "eslint": "^5.10.0",
+    "eslint-config-semistandard": "^13.0.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-mocha": "^5.2.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "mocha": "^5.2.0",
+    "sequelize-cli": "~4.0.0",
+    "supertest": "^3.3.0"
+  },
+  "scripts": {
+    "start": "NODE_ENV=development ./node_modules/.bin/nodemon app.js",
+    "start-prod": "./node_modules/.bin/nodemon app.js",
+    "test": "PORT=9000 mocha"
+  },
+  "semistandard": {
+    "env": {
+      "mocha": true
+    }
+  }
+}
