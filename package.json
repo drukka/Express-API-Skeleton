@@ -10,7 +10,7 @@
     "email-templates": "~5.0.1",
     "express": "^4.16.4",
     "express-mung": "^0.5.1",
-    "handlebars": "^4.1.2",
+    "handlebars": "^4.3.0",
     "helmet": "^3.14.0",
     "i18n": "~0.8.3",
     "json-merger": "^1.1.0",
